@@ -70,4 +70,17 @@ $(document).on("click", "#savenote", function() {
 		//Also, remove the values entered in the input and textarea for the note entry
 		$("#titleinput").val("");
 		$("#bodyinput").val("");
-})
+});
+
+$(document).on("click", "#deletenote", function(){
+  var thisId = $(this).parent();
+  $.ajax({
+    type: "GET",
+    url: '/delete/' + thisId.data('id'), 
+    success: function(response){
+      thisId.remove();
+      $("#note").val("");
+      $("#title").val("");
+    }
+  })
+});

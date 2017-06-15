@@ -146,6 +146,25 @@ app.post("/articles/:id", function(req, res) {
 });
 
 
+// Delete the note from mongodb
+app.get('/delete/:id', function(req, res) {
+  // delete a note by the objectID
+  db.notes.remove({
+    "_id": mongojs.ObjectID(req.params.id)
+  }, function(err, deleted) {
+    // log the errors
+    if (err) {
+      console.log(err);
+      res.send(err);
+    } 
+    // or send the response to the browser.
+    else {
+      console.log(deleted);
+      res.send(deleted);
+    }
+  });
+});
+
 // Listen on port 3000
 app.listen(3000, function() {
 	console.log("App running on port 3000!");
