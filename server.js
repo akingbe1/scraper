@@ -48,32 +48,35 @@ app.get("/scrape", function(req, res) {
 	// First we grab the body of the html with request
 	request("http://www.reddit.com/r/news", function(error, response, html) {
 		//Then, we load that into cheerio and save it to $ for a shorthand selector
+		console.log("made request with cheerio")
+
 		var $ = cheerio.load(html);
 		//Now, we grab every h2 within an article tag, and do the following:
-		$("article h2").each(function(i, element) {
-
+		$("span.domain").each(function(i, element) {
+			console.log("iterating through h2")
 			// Save an empty result object
-			var result = {};
+			// var result = {};
 
-			//Add the text and href of every link, and save them as properties of the result object
-			result.title = $(this).children("a").text();
-			result.link = $(this).children("a").attr("href");
+			// //Add the text and href of every link, and save them as properties of the result object
+			// result.title = $(this).children("a").text();
+			// result.link = $(this).children("a").attr("href");
+			// console.log(result);
 
-			//Using our Article model, create a new entry
-			//This effectively passes the result object to the entry (and the title and link)
-			var entry = new Article(result);
+			// //Using our Article model, create a new entry
+			// //This effectively passes the result object to the entry (and the title and link)
+			// var entry = new Article(result);
 
-			//Now, save that entry to the db
-			entry.save(function(err, doc) {
-				//Log any errors
-				if(err) {
-					console.log(err);
-				}
-				// Or log the doc
-				else {
-					res.json(doc);
-				}
-			})
+			// //Now, save that entry to the db
+			// entry.save(function(err, doc) {
+			// 	//Log any errors
+			// 	if(err) {
+			// 		console.log(err);
+			// 	}
+			// 	// Or log the doc
+			// 	else {
+			// 		res.json(doc);
+			// 	}
+			// })
 		})
 	});
 	// Tell the browser that we finished scraping the text
