@@ -21,6 +21,8 @@ app.use(logger("dev"));
 app.use(bodyParser.urlencoded({
 	extended: false
 }));
+app.use(bodyParser.json());
+
 
 // Make public a static dir
 app.use(express.static("public"));
@@ -43,8 +45,9 @@ db.once("open", function() {
 // Routes
 // ======
 
-// A GET request to scrape the reddit/r/news website
+// A GET request to scrape the NY Times website
 app.get("/scrape", function(req, res) {
+
 	// First we grab the body of the html with request
 	request("http://www.nytimes.com/", function(error, response, html) {
 		//Then, we load that into cheerio and save it to $ for a shorthand selector
@@ -59,25 +62,28 @@ app.get("/scrape", function(req, res) {
 			var result = {};
 
 			//Add the text and href of every link, and save them as properties of the result object
-			result.title = $(this).children("a").text();
+			result.title = $(this).children("a").text(); 
 			result.link = $(this).children("a").attr("href");
-			console.log(result);
 
-			//Using our Article model, create a new entry
-			//This effectively passes the result object to the entry (and the title and link)
-			var entry = new Article(result);
+			if (typeof(result.title) === "string" && typeof(result.link) === "string")
+			{
+				//Using our Article model, create a new entry
+				//This effectively passes the result object to the entry (and the title and link)
+				var entry = new Article(result);
 
-			//Now, save that entry to the db
-			entry.save(function(err, doc) {
-				//Log any errors
-				if(err) {
-					console.log(err);
-				}
-				// Or log the doc
-				else {
-					res.json(doc);
-				}
-			})
+				//Now, save that entry to the db
+				entry.save(function(err, doc) {
+					//Log any errors
+					if(err) {
+						console.log(err);
+					}
+					// Or log the doc
+					else {
+						console.log(result);
+					}
+				})
+			}
+
 		})
 	});
 	// Tell the browser that we finished scraping the text
